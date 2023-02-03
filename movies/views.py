@@ -1,28 +1,49 @@
 """Django views
 """
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.shortcuts import render
-
-data = {
-    'movies': [
-        {'id': 1, 'title': 'The Shawshank Redemption', 'release_year': 1994,
-            'director': 'Frank Darabont', 'genre': 'Drama'},
-        {'id': 2, 'title': 'The Godfather', 'release_year': 1972,
-            'director': 'Francis Ford Coppola', 'genre': 'Crime, Drama'},
-        {'id': 3, 'title': 'The Dark Knight', 'release_year': 2008,
-            'director': 'Christopher Nolan', 'genre': 'Action, Crime, Drama'},
-        {'id': 4, 'title': 'The Godfather: Part II', 'release_year': 1974,
-            'director': 'Francis Ford Coppola', 'genre': 'Crime, Drama'},
-        {'id': 5, 'title': 'The Lord of the Rings: The Return of the King',
-            'release_year': 2003, 'director': 'Peter Jackson', 'genre': 'Action, Adventure, Drama'}
-    ]
-}
+from .models import Movie
 
 
 def movies(request):
     """Movies View
     """
-    return render(request, 'movies/movies.html', data)
+    data = Movie.objects.all()
+    return render(request, 'movies/movies.html', {'movies': data})
+
+
+def detail(request, movie_id):
+    """Movie detail View
+    """
+    data = Movie.objects.get(pk=movie_id)
+    return render(request, 'movies/detail.html', {'movie': data})
+
+
+def add(request):
+    """Add a Movie View
+    """
+    title = request.POST.get('title')
+    release_year = request.POST.get('release_year')
+    director = request.POST.get('director')
+    genre = request.POST.get('genre')
+    if title and release_year and director and genre:
+        movie = Movie(title=title, release_year=release_year,
+                      director=director, genre=genre)
+        movie.save()
+        return HttpResponseRedirect('/movies')
+    return render(request, 'movies/add_movie.html')
+
+
+def delete(_request, movie_id):
+    """Movie delete View
+    """
+    try:
+        movie = Movie.objects.get(pk=movie_id)
+    except:
+        raise Http404("Movie doesn't exist")
+
+    movie.delete()
+    return HttpResponseRedirect('/movies')
 
 
 def home(_request):

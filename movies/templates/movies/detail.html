@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{{movie.title}}</title>
+  </head>
+  <body>
+    <h1>{{movie.title}} Details</h1>
+    <p>
+      {{movie.director}}'s <b>{{movie.title}}</b> -
+      <i>{{movie.release_year}}</i>: {{movie.genre}}
+    </p>
+    <a href="delete/{{movie.id}}">Delete this movie</a>
+  </body>
+</html>
